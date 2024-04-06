@@ -14,11 +14,16 @@
 # limitations under the License.
 ##########################################################################
 
-cmake_minimum_required(VERSION 3.25)
-project(opengl-sample)
+set(TARGET simple-triangle)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(SOURCES
+    main.cxx
+)
 
-add_subdirectory(3rd-party)
-add_subdirectory(src)
+set(HEADERS
+)
+
+
+add_executable(${TARGET} ${SOURCES} ${HEADERS})
+
+target_link_libraries(${TARGET} glfw glad)
