@@ -22,6 +22,10 @@
 #include <stb_image.h>
 #undef STB_IMAGE_IMPLEMENTATION
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 int main()
 {
   if (glfwInit() != GLFW_TRUE)
@@ -72,6 +76,20 @@ int main()
     0.f, 0.f, 1.f,
   };
 
+  glm::mat4 transform = {
+     std::cos(0.01f), 0.f, std::sin(0.01f), 0.f,
+                0.f, 1.f,            0.f, 0.f,
+    -std::sin(0.01f), 0.f, std::cos(0.01f), 0.f,
+                0.f, 0.f,            0.f, 1.f,
+  };
+
+  //float transform[] = {
+  // 1.f, 0.f, 0.f, 1.f,
+  // 0.f, 1.f, 0.f, 0.f,
+  // 0.f, 0.f, 1.f, 0.f,
+  // 0.f, 0.f, 0.f, 1.f,
+  //};
+
   GLuint vbo[3];
   glGenBuffers(3, vbo);
 
@@ -92,7 +110,7 @@ int main()
   glEnableVertexAttribArray(1);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(colors), texCoords, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
   glEnableVertexAttribArray(2);
 
@@ -102,15 +120,18 @@ int main()
     "layout (location = 2) in vec2 aTexCoord;\n"
     "out vec3 vertexColor;\n"
     "out vec2 texCoord;\n"
+    "uniform mat4 transform;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(aPos, 1.0);\n"
+    "   gl_Position = transform * vec4(aPos, 1.0);\n"
     "   vertexColor = aColor;\n"
     "   texCoord = aTexCoord;\n"
     "}\0";
 
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+  glCompileShader(vertexShader);
+
 
   const GLchar* fragmentShaderSource = "#version 330 core\n"
     "in vec3 vertexColor;\n"
@@ -124,6 +145,7 @@ int main()
 
   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+  glCompileShader(fragmentShader);
 
   GLuint program = glCreateProgram();
 
@@ -132,11 +154,17 @@ int main()
 
   glLinkProgram(program);
 
+
+
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(program);
+    GLuint transformLoc = glGetUniformLocation(program, "transform");
+    transform *= transform;
+    glUniformMatrix4fv(transformLoc, 1, GL_TRUE, glm::value_ptr(transform));
+
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 

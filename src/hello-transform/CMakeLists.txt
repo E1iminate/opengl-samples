@@ -14,6 +14,19 @@
 # limitations under the License.
 ##########################################################################
 
-add_subdirectory(simple-triangle)
-add_subdirectory(hello-texture)
-add_subdirectory(hello-transform)
+set(TARGET hello-transform)
+
+set(SOURCES
+    main.cxx
+)
+
+set(HEADERS
+)
+
+add_executable(${TARGET} ${SOURCES} ${HEADERS})
+
+target_link_libraries(${TARGET} glfw glad stbimage glm)
+
+target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+
+copy_assets(${TARGET})

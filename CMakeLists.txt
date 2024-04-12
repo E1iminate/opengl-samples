@@ -44,4 +44,5 @@ find_package(glad REQUIRED)
 find_package(stbimage REQUIRED)
 
 add_subdirectory(${ROOT_DIR}/3rd-party/glfw)
+add_subdirectory(${ROOT_DIR}/3rd-party/glm)
 add_subdirectory(src)
