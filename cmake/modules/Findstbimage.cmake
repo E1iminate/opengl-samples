@@ -14,15 +14,8 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET simple-triangle)
+set(TARGET stbimage)
 
-set(SOURCES
-    main.cxx
-)
+add_library(${TARGET} INTERFACE)
 
-set(HEADERS
-)
-
-add_executable(${TARGET} ${SOURCES} ${HEADERS})
-
-target_link_libraries(${TARGET} glfw glad)
+target_include_directories(${TARGET} INTERFACE ${ROOT_DIR}/3rd-party/stb)

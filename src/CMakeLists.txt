@@ -15,3 +15,4 @@
 ##########################################################################
 
 add_subdirectory(simple-triangle)
+add_subdirectory(hello-texture)

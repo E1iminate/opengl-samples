@@ -14,10 +14,15 @@
 * limitations under the License.
 *************************************************************************/
 
+#include "common.hxx"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#undef STB_IMAGE_IMPLEMENTATION
 
-int main()
+int main(int argc, char* argv[])
 {
   if (glfwInit() != GLFW_TRUE)
     return -1;
@@ -37,6 +42,23 @@ int main()
   if (gladLoadGL() == 0)
     return -1;
 
+  int width = -1, height = -1, nrChannels = -1;
+  unsigned char* data = stbi_load((GetCurrentExecutableDirectory() / "assets/textures/wooden_container.jpg").string().c_str(), &width, &height, &nrChannels, 0);
+
+  GLuint texture = -1;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  stbi_image_free(data);
+
+  float texCoords[] = {
+    0.0f, 0.0f,  // lower-left corner  
+    1.0f, 0.0f,  // lower-right corner
+    0.5f, 1.0f   // top-center corner
+  };
+
+
   float vertices[] = {
     -0.75f, -.5f, 0.f,
     0.75f, -.5f, 0.f,
@@ -50,8 +72,8 @@ int main()
     0.f, 0.f, 1.f,
   };
 
-  GLuint vbo[2];
-  glGenBuffers(2, vbo);
+  GLuint vbo[3];
+  glGenBuffers(3, vbo);
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -69,14 +91,22 @@ int main()
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
   glEnableVertexAttribArray(1);
 
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(colors), texCoords, GL_STATIC_DRAW);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+  glEnableVertexAttribArray(2);
+
   const GLchar* vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 aColor;\n"
+    "layout (location = 2) in vec2 aTexCoord;\n"
     "out vec3 vertexColor;\n"
+    "out vec2 texCoord;\n"
     "void main()\n"
     "{\n"
     "   gl_Position = vec4(aPos, 1.0);\n"
     "   vertexColor = aColor;\n"
+    "   texCoord = aTexCoord;\n"
     "}\0";
 
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -84,10 +114,12 @@ int main()
 
   const GLchar* fragmentShaderSource = "#version 330 core\n"
     "in vec3 vertexColor;\n"
+    "in vec2 texCoord;\n"
     "out vec4 FragColor;\n"
+    "uniform sampler2D ourTexture;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(vertexColor, 1.0);\n"
+    "   FragColor = texture(ourTexture, texCoord);\n"
     "}\0";
 
   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);

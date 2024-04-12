@@ -14,15 +14,17 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET simple-triangle)
+set(TARGET glad)
 
 set(SOURCES
-    main.cxx
+    ${ROOT_DIR}/3rd-party/glad/src/glad.c
 )
 
 set(HEADERS
+    ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
+    ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
 )
 
-add_executable(${TARGET} ${SOURCES} ${HEADERS})
+add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
 
-target_link_libraries(${TARGET} glfw glad)
+target_include_directories(${TARGET} PUBLIC ${ROOT_DIR}/3rd-party/glad/include)

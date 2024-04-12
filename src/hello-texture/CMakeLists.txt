@@ -14,7 +14,7 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET simple-triangle)
+set(TARGET hello-texture)
 
 set(SOURCES
     main.cxx
@@ -25,4 +25,8 @@ set(HEADERS
 
 add_executable(${TARGET} ${SOURCES} ${HEADERS})
 
-target_link_libraries(${TARGET} glfw glad)
+target_link_libraries(${TARGET} glfw glad stbimage)
+
+target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+
+copy_assets(${TARGET})
