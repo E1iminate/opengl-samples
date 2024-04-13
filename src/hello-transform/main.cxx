@@ -26,6 +26,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <cmath>
+#include <chrono>
+#include <numbers>
+
 int main()
 {
   if (glfwInit() != GLFW_TRUE)
@@ -75,20 +79,6 @@ int main()
     0.f, 1.f, 0.f,
     0.f, 0.f, 1.f,
   };
-
-  glm::mat4 transform = {
-     std::cos(0.01f), 0.f, std::sin(0.01f), 0.f,
-                0.f, 1.f,            0.f, 0.f,
-    -std::sin(0.01f), 0.f, std::cos(0.01f), 0.f,
-                0.f, 0.f,            0.f, 1.f,
-  };
-
-  //float transform[] = {
-  // 1.f, 0.f, 0.f, 1.f,
-  // 0.f, 1.f, 0.f, 0.f,
-  // 0.f, 0.f, 1.f, 0.f,
-  // 0.f, 0.f, 0.f, 1.f,
-  //};
 
   GLuint vbo[3];
   glGenBuffers(3, vbo);
@@ -155,14 +145,30 @@ int main()
   glLinkProgram(program);
 
 
-
+  auto startTime = std::chrono::steady_clock::now();
+  float angle = 0.f;
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(program);
     GLuint transformLoc = glGetUniformLocation(program, "transform");
-    transform *= transform;
+
+    auto endTime = std::chrono::steady_clock::now();
+    float dt = std::chrono::duration<float>(endTime - startTime).count();
+    startTime = endTime;
+
+    angle = std::fmodf(angle + 1.f * dt, 2.f * std::numbers::pi_v<float>);
+
+
+    glm::mat4 transform =
+    {
+      std::cos(angle), -std::sin(angle), 0.f, 0.f,
+      std::sin(angle),  std::cos(angle), 0.f, 0.f,
+                  0.f,              0.f, 1.f, 0.f,
+                  0.f,              0.f, 0.f, 1.f,
+    };
+
     glUniformMatrix4fv(transformLoc, 1, GL_TRUE, glm::value_ptr(transform));
 
     glBindVertexArray(vao);
