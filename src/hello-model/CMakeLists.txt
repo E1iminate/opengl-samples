@@ -14,7 +14,14 @@
 # limitations under the License.
 ##########################################################################
 
-add_subdirectory(simple-triangle)
-add_subdirectory(hello-texture)
-add_subdirectory(hello-transform)
-add_subdirectory(hello-model)
+set(TARGET hello-model)
+
+set(SOURCES main.cxx)
+
+add_executable(${TARGET} ${SOURCES})
+
+target_link_libraries(${TARGET} glfw glad stbimage glm imgui tinyobjloader)
+
+target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+
+copy_assets(${TARGET})

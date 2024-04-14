@@ -14,7 +14,8 @@
 # limitations under the License.
 ##########################################################################
 
-add_subdirectory(simple-triangle)
-add_subdirectory(hello-texture)
-add_subdirectory(hello-transform)
-add_subdirectory(hello-model)
+set(TARGET tinyobjloader)
+
+add_library(${TARGET} INTERFACE)
+
+target_include_directories(${TARGET} INTERFACE ${ROOT_DIR}/3rd-party/tinyobjloader)

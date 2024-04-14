@@ -17,12 +17,12 @@
 set(TARGET glad)
 
 set(SOURCES
-    ${ROOT_DIR}/3rd-party/glad/src/glad.c
+  ${ROOT_DIR}/3rd-party/glad/src/glad.c
 )
 
 set(HEADERS
-    ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
-    ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
+  ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
+  ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
 )
 
 add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
