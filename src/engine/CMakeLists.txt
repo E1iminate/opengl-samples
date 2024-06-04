@@ -14,10 +14,21 @@
 # limitations under the License.
 ##########################################################################
 
-add_subdirectory(common)
-add_subdirectory(engine)
+set(TARGET engine)
 
-add_subdirectory(simple-triangle)
-add_subdirectory(hello-texture)
-add_subdirectory(hello-transform)
-add_subdirectory(hello-model)
+set(SOURCES
+  core/application.cxx
+  core/window.cxx
+)
+    
+set(HEADERS
+  include/core/application.hxx
+  include/core/exceptions.hxx
+  include/core/window.hxx
+)
+
+add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
+
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+
+target_link_libraries(${TARGET} glfw)

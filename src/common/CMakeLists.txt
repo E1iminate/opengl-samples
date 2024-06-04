@@ -14,10 +14,18 @@
 # limitations under the License.
 ##########################################################################
 
-add_subdirectory(common)
-add_subdirectory(engine)
+set(TARGET common)
 
-add_subdirectory(simple-triangle)
-add_subdirectory(hello-texture)
-add_subdirectory(hello-transform)
-add_subdirectory(hello-model)
+set(SOURCES
+  common.cxx
+)
+    
+set(HEADERS
+  common.hxx
+)
+
+add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
+
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+target_link_libraries(${TARGET} PRIVATE stbimage tinyobjloader)

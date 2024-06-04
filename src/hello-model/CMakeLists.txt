@@ -20,8 +20,13 @@ set(SOURCES main.cxx)
 
 add_executable(${TARGET} ${SOURCES})
 
-target_link_libraries(${TARGET} glfw glad stbimage glm imgui tinyobjloader)
+target_link_libraries(${TARGET} engine glad stbimage glm imgui tinyobjloader common)
 
 target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+
+source_group(Shaders FILES
+  ${ROOT_DIR}/shaders/vertex.glsl
+  #${ROOT_DIR}/shaders/fragment.glsl
+)
 
 copy_assets(${TARGET})
