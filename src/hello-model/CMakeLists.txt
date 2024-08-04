@@ -14,17 +14,22 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET glad)
+set(TARGET hello-model)
 
-set(SOURCES
-  ${ROOT_DIR}/3rd-party/glad/src/glad.c
+set(SOURCES include/hello-model/hello-model.hxx hello-model.cxx main.cxx)
+
+add_executable(${TARGET} ${SOURCES})
+
+target_link_libraries(${TARGET} engine glad stbimage glm imgui tinyobjloader common)
+
+target_include_directories(${TARGET}
+PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
-set(HEADERS
-  ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
-  ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
+source_group(Shaders FILES
+  ${ROOT_DIR}/shaders/vertex.glsl
+  #${ROOT_DIR}/shaders/fragment.glsl
 )
 
-add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
-
-target_include_directories(${TARGET} PUBLIC ${ROOT_DIR}/3rd-party/glad/include)
+copy_assets(${TARGET})

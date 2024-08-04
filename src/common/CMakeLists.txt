@@ -14,17 +14,18 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET glad)
+set(TARGET common)
 
 set(SOURCES
-  ${ROOT_DIR}/3rd-party/glad/src/glad.c
+  common.cxx
 )
 
 set(HEADERS
-  ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
-  ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
+  common.hxx
 )
 
 add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
 
-target_include_directories(${TARGET} PUBLIC ${ROOT_DIR}/3rd-party/glad/include)
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+target_link_libraries(${TARGET} PUBLIC stbimage tinyobjloader)

@@ -16,17 +16,10 @@
 
 set(TARGET hello-texture)
 
-set(SOURCES
-    main.cxx
-)
+set(SOURCES main.cxx)
 
-set(HEADERS
-)
+add_executable(${TARGET} ${SOURCES})
 
-add_executable(${TARGET} ${SOURCES} ${HEADERS})
-
-target_link_libraries(${TARGET} glfw glad stbimage)
-
-target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+target_link_libraries(${TARGET} common glfw glad stbimage)
 
 copy_assets(${TARGET})

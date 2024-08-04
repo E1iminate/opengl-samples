@@ -16,13 +16,8 @@
 
 set(TARGET simple-triangle)
 
-set(SOURCES
-    main.cxx
-)
+set(SOURCES main.cxx)
 
-set(HEADERS
-)
-
-add_executable(${TARGET} ${SOURCES} ${HEADERS})
+add_executable(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} glfw glad)

@@ -14,17 +14,8 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET glad)
+set(TARGET tinyobjloader)
 
-set(SOURCES
-  ${ROOT_DIR}/3rd-party/glad/src/glad.c
-)
+add_library(${TARGET} INTERFACE)
 
-set(HEADERS
-  ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
-  ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
-)
-
-add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
-
-target_include_directories(${TARGET} PUBLIC ${ROOT_DIR}/3rd-party/glad/include)
+target_include_directories(${TARGET} INTERFACE ${ROOT_DIR}/3rd-party/tinyobjloader)

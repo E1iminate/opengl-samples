@@ -14,6 +14,10 @@
 # limitations under the License.
 ##########################################################################
 
+add_subdirectory(common)
+add_subdirectory(engine)
+
 add_subdirectory(simple-triangle)
 add_subdirectory(hello-texture)
 add_subdirectory(hello-transform)
+add_subdirectory(hello-model)

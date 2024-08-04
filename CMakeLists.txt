@@ -26,23 +26,25 @@ list(APPEND CMAKE_MODULE_PATH ${ROOT_DIR}/cmake/modules)
 set(ASSETS_DIR ${ROOT_DIR}/assets)
 
 function(copy_assets TARGET_NAME)
-    set(TARGET_ASSETS $<TARGET_FILE_DIR:${TARGET_NAME}>/assets)
-
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-        ${TARGET_ASSETS}
-    )
-
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_DIR}
-        ${TARGET_ASSETS}
-    )
+  set(TARGET_ASSETS $<TARGET_FILE_DIR:${TARGET_NAME}>/assets)
+  
+  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+      ${TARGET_ASSETS}
+  )
+  
+  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${ASSETS_DIR}
+      ${TARGET_ASSETS}
+  )
 endfunction()
 
 find_package(glad REQUIRED)
+find_package(imgui REQUIRED)
 find_package(stbimage REQUIRED)
-
+find_package(tinyobjloader REQUIRED)
 add_subdirectory(${ROOT_DIR}/3rd-party/glfw)
 add_subdirectory(${ROOT_DIR}/3rd-party/glm)
+
 add_subdirectory(src)

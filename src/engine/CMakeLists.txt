@@ -14,17 +14,19 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET glad)
+set(TARGET engine)
 
 set(SOURCES
-  ${ROOT_DIR}/3rd-party/glad/src/glad.c
+  core/application.cxx
 )
 
 set(HEADERS
-  ${ROOT_DIR}/3rd-party/glad/include/glad/glad.h
-  ${ROOT_DIR}/3rd-party/glad/include/KHR/khrplatform.h
+  include/core/application.hxx
+  include/core/exceptions.hxx
 )
 
 add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
 
-target_include_directories(${TARGET} PUBLIC ${ROOT_DIR}/3rd-party/glad/include)
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+
+target_link_libraries(${TARGET} glfw glad common)
