@@ -19,14 +19,28 @@
 namespace engine {
 namespace glfw {
 
-Application::Application(Callback callback)
-  : m_callback(callback)
-{}
+static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+  glViewport(0, 0, width, height);
+}
+
+Application::Application()
+{
+  if (!m_window.Get())
+    throw WindowInitFail();
+
+  glfwMakeContextCurrent(m_window.Get());
+  glfwSetFramebufferSizeCallback(m_window.Get(), FramebufferSizeCallback);
+
+  if (gladLoadGL() == 0)
+    throw LibraryInitFail("gladLoadGL failed!");
+}
 
 void Application::Run()
 {
   while (!glfwWindowShouldClose(GetWindow())) {
-    m_callback(*this);
+    OnUpdate();
+    OnRender();
 
     glfwSwapBuffers(GetWindow());
     glfwPollEvents();

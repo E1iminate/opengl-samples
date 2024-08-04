@@ -16,13 +16,16 @@
 
 set(TARGET hello-model)
 
-set(SOURCES main.cxx)
+set(SOURCES include/hello-model/hello-model.hxx hello-model.cxx main.cxx)
 
 add_executable(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} engine glad stbimage glm imgui tinyobjloader common)
 
-target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+target_include_directories(${TARGET}
+PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}/include
+)
 
 source_group(Shaders FILES
   ${ROOT_DIR}/shaders/vertex.glsl

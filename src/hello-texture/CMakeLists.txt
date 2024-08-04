@@ -20,8 +20,6 @@ set(SOURCES main.cxx)
 
 add_executable(${TARGET} ${SOURCES})
 
-target_link_libraries(${TARGET} glfw glad stbimage)
-
-target_include_directories(${TARGET} PRIVATE ${ROOT_DIR}/src/common)
+target_link_libraries(${TARGET} common glfw glad stbimage)
 
 copy_assets(${TARGET})

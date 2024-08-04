@@ -14,46 +14,33 @@
 * limitations under the License.
 *************************************************************************/
 
-#include "core/window.hxx"
-#include "core/exceptions.hxx"
+#pragma once
 
-namespace engine {
-namespace glfw {
+#include "core/application.hxx"
 
-Window::Window()
+#include <memory>
+
+class HelloModel : public engine::glfw::Application
 {
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+public:
+  HelloModel();
+  ~HelloModel();
 
-  m_holder = glfwCreateWindow(800, 600, "OpenGL Tutorial", NULL, NULL);
+  void OnUpdate() final;
+  void OnRender() final;
 
-  glfwMakeContextCurrent(Get());
-}
+private:
+  void LoadAssets();
 
-Window::~Window()
-{}
+  std::unique_ptr<tinyobj::Model> m_model;
+  std::vector<GLuint> m_vertex_indexes;
 
-GLFWwindow* Window::Get()
-{
-  return m_holder.Get();
-}
-
-Window::Holder::Holder(GLFWwindow* window) : m_window(window)
-{
-  if (!m_window)
-    throw WindowInitFail{};
-}
-
-Window::Holder::~Holder()
-{
-  glfwDestroyWindow(m_window);
-}
-
-GLFWwindow* Window::Holder::Get()
-{
-  return m_window;
-}
-
-} // namespace glfw
-} // namespace engine
+  std::chrono::steady_clock::time_point m_startTime = std::chrono::steady_clock::now();
+  float m_angle = 0.f;
+  float m_speed = 1.f;
+  float m_scalingFactor = 0.1f;
+  GLuint m_program = 0u;
+  GLuint m_ebo = -1;
+  GLuint m_vbo = -1;
+  GLuint m_vao = -1;
+};

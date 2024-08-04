@@ -16,24 +16,72 @@
 
 #pragma once
 
-#include "core/window.hxx"
+#include "core/exceptions.hxx"
+
+// Include in this order to prevent GL header & Windows redefenition errors
+#include "common.hxx"
+#include "glad/glad.h"
+#include <GLFW/glfw3.h>
+//
 
 #include <functional>
+#include <memory>
 
 namespace engine {
 namespace glfw {
 
+
 class Application
 {
-public:
-  using Callback = std::function<void(Application&)>;
+  struct LibraryHandle
+  {
+    LibraryHandle()
+    {
+      if (glfwInit() != GLFW_TRUE)
+        throw LibraryInitFail("glfwInit failed!");
+    }
+    ~LibraryHandle()
+    {
+      glfwTerminate();
+    }
+  };
 
-  Application(Callback callback);
+  class Window
+  {
+  public:
+    Window()
+    {
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+      handle = glfwCreateWindow(800, 600, "OpenGL Tutorial", NULL, NULL);
+    }
+
+    ~Window()
+    {
+      glfwDestroyWindow(handle);
+    }
+
+    GLFWwindow* Get() { return handle; }
+
+  private:
+    GLFWwindow* handle = nullptr;
+  };
+
+public:
+  Application();
+
+  virtual void OnUpdate() = 0;
+  virtual void OnRender() = 0;
+
   void Run();
+
+protected:
   GLFWwindow* GetWindow() { return m_window.Get(); }
 
 private:
-  Callback m_callback;
+  LibraryHandle m_handle;
   Window m_window;
 };
 

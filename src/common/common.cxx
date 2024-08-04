@@ -14,4 +14,6 @@
 * limitations under the License.
 *************************************************************************/
 
+#define STB_IMAGE_IMPLEMENTATION
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "common.hxx"

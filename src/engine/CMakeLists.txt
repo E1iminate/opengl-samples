@@ -18,17 +18,15 @@ set(TARGET engine)
 
 set(SOURCES
   core/application.cxx
-  core/window.cxx
 )
-    
+
 set(HEADERS
   include/core/application.hxx
   include/core/exceptions.hxx
-  include/core/window.hxx
 )
 
 add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
 
 target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
-target_link_libraries(${TARGET} glfw)
+target_link_libraries(${TARGET} glfw glad common)

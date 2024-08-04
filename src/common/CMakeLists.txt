@@ -19,7 +19,7 @@ set(TARGET common)
 set(SOURCES
   common.cxx
 )
-    
+
 set(HEADERS
   common.hxx
 )
@@ -28,4 +28,4 @@ add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})
 
 target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
-target_link_libraries(${TARGET} PRIVATE stbimage tinyobjloader)
+target_link_libraries(${TARGET} PUBLIC stbimage tinyobjloader)

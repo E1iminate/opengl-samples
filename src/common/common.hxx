@@ -34,7 +34,7 @@ struct WinAPIError : public std::runtime_error
   using std::runtime_error::runtime_error;
 };
 
-std::filesystem::path GetCurrentExecutableAbsolutePath() {
+inline std::filesystem::path GetCurrentExecutableAbsolutePath() {
   // https://learn.microsoft.com/en-ie/windows/win32/fileio/maximum-file-path-limitation?tabs=registry
   // The maximum path of 32, 767 characters is approximate, because the "\\?\" prefix may be expanded to a longer string by the system at run time,
   // and this expansion applies to the total length.
@@ -49,7 +49,7 @@ std::filesystem::path GetCurrentExecutableAbsolutePath() {
 }
 #endif
 
-std::filesystem::path GetCurrentExecutableDirectory() {
+inline std::filesystem::path GetCurrentExecutableDirectory() {
   std::filesystem::path path = GetCurrentExecutableAbsolutePath();
   return path.parent_path();
 }
