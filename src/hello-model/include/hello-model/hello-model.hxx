@@ -32,8 +32,20 @@ public:
 private:
   void LoadAssets();
 
+  struct Vec2 {
+    tinyobj::real_t x = 0.f;
+    tinyobj::real_t y = 0.f;
+  };
+
+  struct Vec3 {
+    tinyobj::real_t x = 0.f;
+    tinyobj::real_t y = 0.f;
+    tinyobj::real_t z = 0.f;
+  };
+
   std::unique_ptr<tinyobj::Model> m_model;
-  std::vector<GLuint> m_vertex_indexes;
+  std::vector<Vec3> m_vertices;
+  std::vector<Vec2> m_texcoords;
 
   std::chrono::steady_clock::time_point m_startTime = std::chrono::steady_clock::now();
   float m_angle = 0.f;

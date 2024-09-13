@@ -61,12 +61,9 @@ void HelloModel::LoadAssets()
 
   for (tinyobj::index_t index : m_model->Shapes()[0].mesh.indices)
   {
-    m_vertex_indexes.push_back(index.vertex_index);
+    m_vertices.push_back({m_model->Attrib().vertices[3 * index.vertex_index], m_model->Attrib().vertices[3 * index.vertex_index + 1], m_model->Attrib().vertices[3 * index.vertex_index + 2]});
+    m_texcoords.push_back({m_model->Attrib().texcoords[2 * index.texcoord_index], m_model->Attrib().texcoords[2 * index.texcoord_index + 1]});
   }
-
-  glGenBuffers(1, &m_ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_vertex_indexes.size() * sizeof(m_vertex_indexes[0]), m_vertex_indexes.data(), GL_STATIC_DRAW);
 
   GLuint vbo[2];
   glGenBuffers(2, vbo);
@@ -75,15 +72,15 @@ void HelloModel::LoadAssets()
   glBindVertexArray(m_vao);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, m_model->Attrib().vertices.size() * sizeof(m_model->Attrib().vertices[0]), m_model->Attrib().vertices.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(m_vertices[0]), m_vertices.data(), GL_STATIC_DRAW);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
   glEnableVertexAttribArray(0);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-  glBufferData(GL_ARRAY_BUFFER, m_model->Attrib().texcoords.size() * sizeof(m_model->Attrib().texcoords[0]), m_model->Attrib().texcoords.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, m_texcoords.size() * sizeof(m_texcoords[0]), m_texcoords.data(), GL_STATIC_DRAW);
 
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
   glEnableVertexAttribArray(1);
 
   const GLchar* vertexShaderSource = R"(
@@ -170,8 +167,8 @@ void HelloModel::OnUpdate()
                 0.f,  0.f,             0.f, 1.f,
   };
 
-  glUniformMatrix4fv(rotationLoc, 1, GL_TRUE, glm::value_ptr(rotation_y));
-  glUniformMatrix4fv(scaleLoc, 1, GL_TRUE, glm::value_ptr(scale));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation"), 1, GL_TRUE, glm::value_ptr(rotation_y));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "scale"), 1, GL_TRUE, glm::value_ptr(scale));
 }
 
 void HelloModel::OnRender()
@@ -188,7 +185,7 @@ void HelloModel::OnRender()
   glBindVertexArray(m_vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
-  glDrawElements(GL_TRIANGLES, m_vertex_indexes.size(), GL_UNSIGNED_INT, nullptr);
+  glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
