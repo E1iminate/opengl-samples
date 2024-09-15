@@ -145,10 +145,13 @@ void HelloModel::OnUpdate()
   GLuint rotationLoc = glGetUniformLocation(m_program, "rotation");
   GLuint scaleLoc = glGetUniformLocation(m_program, "scale");
 
-  glm::mat4 scale =
-  {
+  int window_width = 0, window_height = 0;
+  glfwGetWindowSize(GetWindow(), &window_width, &window_height);
+  float aspect = (float)window_width / (float)window_height;
+
+  glm::mat4 scale = {
     m_scalingFactor,   0.f,   0.f, 0.f,
-      0.f, m_scalingFactor,   0.f, 0.f,
+      0.f, m_scalingFactor * aspect,   0.f, 0.f,
       0.f,   0.f, m_scalingFactor, 0.f,
       0.f,   0.f,   0.f, 1.f,
   };
