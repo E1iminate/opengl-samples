@@ -50,7 +50,8 @@ private:
   std::chrono::steady_clock::time_point m_startTime = std::chrono::steady_clock::now();
   float m_angle = 0.f;
   float m_speed = 1.f;
-  float m_scalingFactor = 0.1f;
+  float m_fov = 90.f;
+  float m_cube_scale = 0.5f;
   GLuint m_program = 0u;
   GLuint m_ebo = -1;
   GLuint m_vbo = -1;

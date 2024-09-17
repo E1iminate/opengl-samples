@@ -88,11 +88,12 @@ void HelloModel::LoadAssets()
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
 out vec2 texCoord;
-uniform mat4 rotation;
+uniform mat4 rotation_y;
+uniform mat4 rotation_z;
 uniform mat4 scale;
 void main()
 {
-  gl_Position = rotation * scale * vec4(aPos, 1.0);
+  gl_Position = scale * rotation_y * rotation_z * vec4(aPos, 1.0);
   texCoord = aTexCoord;
 }
 )";
@@ -132,6 +133,10 @@ HelloModel::~HelloModel()
   ImGui::DestroyContext();
 }
 
+static constexpr float Radians(float degrees) {
+  return std::numbers::pi_v<float> / 180.f * degrees;
+}
+
 void HelloModel::OnUpdate()
 {
   auto endTime = std::chrono::steady_clock::now();
@@ -150,27 +155,28 @@ void HelloModel::OnUpdate()
   float aspect = (float)window_width / (float)window_height;
 
   glm::mat4 scale = {
-    m_scalingFactor,   0.f,   0.f, 0.f,
-      0.f, m_scalingFactor * aspect,   0.f, 0.f,
-      0.f,   0.f, m_scalingFactor, 0.f,
-      0.f,   0.f,   0.f, 1.f,
+    m_cube_scale / std::tanf(Radians(m_fov / 2.f)) / aspect, 0.f, 0.f, 0.f,
+    0.f, m_cube_scale / std::tanf(Radians(m_fov / 2.f)), 0.f, 0.f,
+    0.f, 0.f, m_cube_scale, 0.f,
+    0.f, 0.f, 0.f, 1.f,
   };
 
   glm::mat4 rotation_z = {
     std::cos(m_angle), -std::sin(m_angle), 0.f, 0.f,
     std::sin(m_angle),  std::cos(m_angle), 0.f, 0.f,
-                0.f,              0.f, 1.f, 0.f,
-                0.f,              0.f, 0.f, 1.f,
+                  0.f,                0.f, 1.f, 0.f,
+                  0.f,                0.f, 0.f, 1.f,
   };
 
   glm::mat4 rotation_y = {
     std::cos(m_angle),  0.f, std::sin(m_angle), 0.f,
-                0.f,  1.f,             0.f, 0.f,
+                  0.f,  1.f,             0.f,   0.f,
     -std::sin(m_angle), 0.f, std::cos(m_angle), 0.f,
-                0.f,  0.f,             0.f, 1.f,
+                   0.f, 0.f,             0.f,   1.f,
   };
 
-  glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation"), 1, GL_TRUE, glm::value_ptr(rotation_y));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_z"), 1, GL_TRUE, glm::value_ptr(rotation_z));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_y"), 1, GL_TRUE, glm::value_ptr(rotation_y));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "scale"), 1, GL_TRUE, glm::value_ptr(scale));
 }
 
@@ -181,7 +187,8 @@ void HelloModel::OnRender()
 
   ImGui::NewFrame();
   ImGui::InputFloat("Rotation velocity", &m_speed, 0.5f, 1.0f, "%.1f");
-  ImGui::InputFloat("Scale", &m_scalingFactor, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Fov", &m_fov, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
