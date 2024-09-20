@@ -52,6 +52,8 @@ private:
   float m_speed = 1.f;
   float m_fov = 90.f;
   float m_cube_scale = 0.5f;
+  float m_near_z = 0.01f;
+  float m_far_z = 2.f;
   GLuint m_program = 0u;
   GLuint m_ebo = -1;
   GLuint m_vbo = -1;

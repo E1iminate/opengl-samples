@@ -154,10 +154,12 @@ void HelloModel::OnUpdate()
   glfwGetWindowSize(GetWindow(), &window_width, &window_height);
   float aspect = (float)window_width / (float)window_height;
 
+  float range_z = m_near_z - m_far_z;
+
   glm::mat4 scale = {
-    m_cube_scale / std::tanf(Radians(m_fov / 2.f)) / aspect, 0.f, 0.f, 0.f,
+    m_cube_scale / aspect, 0.f, 0.f, 0.f,
     0.f, m_cube_scale / std::tanf(Radians(m_fov / 2.f)), 0.f, 0.f,
-    0.f, 0.f, m_cube_scale, 0.f,
+    0.f, 0.f, m_cube_scale * (-m_far_z - m_near_z) / range_z, (2.f * m_far_z * m_near_z) / range_z,
     0.f, 0.f, 0.f, 1.f,
   };
 
@@ -189,6 +191,8 @@ void HelloModel::OnRender()
   ImGui::InputFloat("Rotation velocity", &m_speed, 0.5f, 1.0f, "%.1f");
   ImGui::InputFloat("Fov", &m_fov, 0.1f, 0.f, "%.1f");
   ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Near Z", &m_near_z, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Far Z", &m_far_z, 0.1f, 0.f, "%.1f");
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
