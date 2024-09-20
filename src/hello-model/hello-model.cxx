@@ -91,9 +91,11 @@ out vec2 texCoord;
 uniform mat4 rotation_y;
 uniform mat4 rotation_z;
 uniform mat4 scale;
+uniform mat4 projection;
+
 void main()
 {
-  gl_Position = scale * rotation_y * rotation_z * vec4(aPos, 1.0);
+  gl_Position = projection * rotation_y * scale * vec4(aPos, 1.0);
   texCoord = aTexCoord;
 }
 )";
@@ -155,11 +157,19 @@ void HelloModel::OnUpdate()
   float aspect = (float)window_width / (float)window_height;
 
   float range_z = m_near_z - m_far_z;
+  float projection_fov = 1.f / std::tanf(Radians(m_fov / 2.f));
 
   glm::mat4 scale = {
-    m_cube_scale / aspect, 0.f, 0.f, 0.f,
-    0.f, m_cube_scale / std::tanf(Radians(m_fov / 2.f)), 0.f, 0.f,
-    0.f, 0.f, m_cube_scale * (-m_far_z - m_near_z) / range_z, (2.f * m_far_z * m_near_z) / range_z,
+  m_cube_scale, 0.f, 0.f, 0.f,
+  0.f, m_cube_scale, 0.f, 0.f,
+  0.f, 0.f, m_cube_scale, 0.f,
+  0.f, 0.f, 0.f, 1.f,
+  };
+
+  glm::mat4 projection = {
+    projection_fov / aspect, 0.f, 0.f, 0.f,
+    0.f, projection_fov, 0.f, 0.f,
+    0.f, 0.f, (-m_far_z - m_near_z) / range_z, (2.f * m_far_z * m_near_z) / range_z,
     0.f, 0.f, 0.f, 1.f,
   };
 
@@ -179,6 +189,7 @@ void HelloModel::OnUpdate()
 
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_z"), 1, GL_TRUE, glm::value_ptr(rotation_z));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_y"), 1, GL_TRUE, glm::value_ptr(rotation_y));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_TRUE, glm::value_ptr(projection));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "scale"), 1, GL_TRUE, glm::value_ptr(scale));
 }
 
