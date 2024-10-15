@@ -90,12 +90,13 @@ layout (location = 1) in vec2 aTexCoord;
 out vec2 texCoord;
 uniform mat4 rotation_y;
 uniform mat4 rotation_z;
-uniform mat4 scale;
+uniform float scale;
+uniform mat4 translation;
 uniform mat4 projection;
 
 void main()
 {
-  gl_Position = projection * rotation_y * scale * vec4(aPos, 1.0);
+  gl_Position = projection * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
   texCoord = aTexCoord;
 }
 )";
@@ -156,21 +157,21 @@ void HelloModel::OnUpdate()
   glfwGetWindowSize(GetWindow(), &window_width, &window_height);
   float aspect = (float)window_width / (float)window_height;
 
-  float range_z = m_near_z - m_far_z;
+  float range_z = m_far_z - m_near_z;
   float projection_fov = 1.f / std::tanf(Radians(m_fov / 2.f));
 
-  glm::mat4 scale = {
-  m_cube_scale, 0.f, 0.f, 0.f,
-  0.f, m_cube_scale, 0.f, 0.f,
-  0.f, 0.f, m_cube_scale, 0.f,
+  glm::mat4 translation = {
+  1.f, 0.f, 0.f, m_translation_x,
+  0.f, 1.f, 0.f, m_translation_y,
+  0.f, 0.f, 1.f, m_translation_z,
   0.f, 0.f, 0.f, 1.f,
   };
 
   glm::mat4 projection = {
     projection_fov / aspect, 0.f, 0.f, 0.f,
     0.f, projection_fov, 0.f, 0.f,
-    0.f, 0.f, (-m_far_z - m_near_z) / range_z, (2.f * m_far_z * m_near_z) / range_z,
-    0.f, 0.f, 0.f, 1.f,
+    0.f, 0.f, (m_far_z + m_near_z) / range_z, - (2.f * m_far_z * m_near_z) / range_z,
+    0.f, 0.f, 1.f, 0.f,
   };
 
   glm::mat4 rotation_z = {
@@ -190,7 +191,8 @@ void HelloModel::OnUpdate()
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_z"), 1, GL_TRUE, glm::value_ptr(rotation_z));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_y"), 1, GL_TRUE, glm::value_ptr(rotation_y));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_TRUE, glm::value_ptr(projection));
-  glUniformMatrix4fv(glGetUniformLocation(m_program, "scale"), 1, GL_TRUE, glm::value_ptr(scale));
+  glUniform1f(glGetUniformLocation(m_program, "scale"), m_cube_scale);
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "translation"), 1, GL_TRUE, glm::value_ptr(translation));
 }
 
 void HelloModel::OnRender()
@@ -204,6 +206,10 @@ void HelloModel::OnRender()
   ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
   ImGui::InputFloat("Near Z", &m_near_z, 0.1f, 0.f, "%.1f");
   ImGui::InputFloat("Far Z", &m_far_z, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Translation X", &m_translation_x, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Translation Y", &m_translation_y, 0.1f, 0.f, "%.1f");
+  ImGui::InputFloat("Translation Z", &m_translation_z, 0.1f, 0.f, "%.1f");
+
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
