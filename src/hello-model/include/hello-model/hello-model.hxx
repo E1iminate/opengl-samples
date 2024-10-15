@@ -53,7 +53,11 @@ private:
   float m_fov = 90.f;
   float m_cube_scale = 0.5f;
   float m_near_z = 0.1f;
-  float m_far_z = 2.f;
+  float m_far_z = 100.f;
+
+  float m_translation_x = 0.f;
+  float m_translation_y = 0.f;
+  float m_translation_z = 2.f;
   GLuint m_program = 0u;
   GLuint m_ebo = -1;
   GLuint m_vbo = -1;
