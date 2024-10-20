@@ -28,16 +28,19 @@ public:
 
   void OnUpdate() final;
   void OnRender() final;
+  void OnKey(int key, int scancode, int action, int mods) final {}
 
 private:
   void LoadAssets();
 
-  struct Vec2 {
+  struct Vec2
+  {
     tinyobj::real_t x = 0.f;
     tinyobj::real_t y = 0.f;
   };
 
-  struct Vec3 {
+  struct Vec3
+  {
     tinyobj::real_t x = 0.f;
     tinyobj::real_t y = 0.f;
     tinyobj::real_t z = 0.f;

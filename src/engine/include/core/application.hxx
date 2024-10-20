@@ -74,6 +74,7 @@ public:
 
   virtual void OnUpdate() = 0;
   virtual void OnRender() = 0;
+  virtual void OnKey(int key, int scancode, int action, int mods) = 0;
 
   void Run();
 

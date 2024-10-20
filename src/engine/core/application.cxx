@@ -24,13 +24,21 @@ static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
   glViewport(0, 0, width, height);
 }
 
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+  Application* application = static_cast<Application*>(glfwGetWindowUserPointer(window));
+  application->OnKey(key, scancode, action, mods);
+}
+
 Application::Application()
 {
   if (!m_window.Get())
     throw WindowInitFail();
 
+  glfwSetWindowUserPointer(m_window.Get(), this);
   glfwMakeContextCurrent(m_window.Get());
   glfwSetFramebufferSizeCallback(m_window.Get(), FramebufferSizeCallback);
+  glfwSetKeyCallback(m_window.Get(), KeyCallback);
 
   if (gladLoadGL() == 0)
     throw LibraryInitFail("gladLoadGL failed!");

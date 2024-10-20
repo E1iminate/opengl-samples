@@ -93,10 +93,11 @@ uniform mat4 rotation_z;
 uniform float scale;
 uniform mat4 translation;
 uniform mat4 projection;
+uniform mat4 camera;
 
 void main()
 {
-  gl_Position = projection * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
+  gl_Position = projection * camera * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
   texCoord = aTexCoord;
 }
 )";
@@ -188,11 +189,14 @@ void HelloCamera::OnUpdate()
                    0.f, 0.f,             0.f,   1.f,
   };
 
+  glm::mat4 camera = m_camera.GetViewTransform();
+
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_z"), 1, GL_TRUE, glm::value_ptr(rotation_z));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_y"), 1, GL_TRUE, glm::value_ptr(rotation_y));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_TRUE, glm::value_ptr(projection));
   glUniform1f(glGetUniformLocation(m_program, "scale"), m_cube_scale);
   glUniformMatrix4fv(glGetUniformLocation(m_program, "translation"), 1, GL_TRUE, glm::value_ptr(translation));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "camera"), 1, GL_TRUE, glm::value_ptr(camera));
 }
 
 void HelloCamera::OnRender()
@@ -201,14 +205,20 @@ void HelloCamera::OnRender()
   ImGui_ImplGlfw_NewFrame();
 
   ImGui::NewFrame();
-  ImGui::InputFloat("Rotation velocity", &m_speed, 0.5f, 1.0f, "%.1f");
-  ImGui::InputFloat("Fov", &m_fov, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Near Z", &m_near_z, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Far Z", &m_far_z, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Translation X", &m_translation_x, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Translation Y", &m_translation_y, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Translation Z", &m_translation_z, 0.1f, 0.f, "%.1f");
+
+  ImGui::Begin("hello-camera");
+
+    ImGui::InputFloat("Rotation velocity", &m_speed, 0.5f, 1.0f, "%.1f");
+    ImGui::InputFloat("Fov", &m_fov, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Near Z", &m_near_z, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Far Z", &m_far_z, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Translation X", &m_translation_x, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Translation Y", &m_translation_y, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Translation Z", &m_translation_z, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Camera velocity", &m_camera_velocity, 0.1f, 0.f, "%.1f");
+
+  ImGui::End();
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -220,6 +230,30 @@ void HelloCamera::OnRender()
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void HelloCamera::OnKey(int key, int scancode, int action, int mods)
+{
+  glm::vec3 direction{};
+  switch (key)
+  {
+  case GLFW_KEY_W:
+    direction.z += 1.f;
+    break;
+  case GLFW_KEY_S:
+    direction.z -= 1.f;
+    break;
+  case GLFW_KEY_A:
+    direction.x -= 1.f;
+    break;
+  case GLFW_KEY_D:
+    direction.x += 1.f;
+    break;
+  default:
+    break;
+  }
+
+  m_camera.Move(direction);
 }
 
 int main()

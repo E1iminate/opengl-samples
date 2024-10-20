@@ -17,6 +17,7 @@
 #pragma once
 
 #include "core/application.hxx"
+#include "core/camera.hxx"
 
 #include <memory>
 
@@ -28,9 +29,12 @@ public:
 
   void OnUpdate() final;
   void OnRender() final;
+  void OnKey(int key, int scancode, int action, int mods) final;
 
 private:
   void LoadAssets();
+
+  engine::glfw::Camera m_camera;
 
   struct Vec2 {
     tinyobj::real_t x = 0.f;
@@ -58,6 +62,7 @@ private:
   float m_translation_x = 0.f;
   float m_translation_y = 0.f;
   float m_translation_z = 2.f;
+  float m_camera_velocity = .5f;
   GLuint m_program = 0u;
   GLuint m_ebo = -1;
   GLuint m_vbo = -1;
