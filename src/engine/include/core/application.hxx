@@ -17,6 +17,7 @@
 #pragma once
 
 #include "core/exceptions.hxx"
+#include "core/user-input-handler.hxx"
 
 // Include in this order to prevent GL header & Windows redefenition errors
 #include "common.hxx"
@@ -71,10 +72,10 @@ class Application
 
 public:
   Application();
+  Application(IUserInputHandler& user_input_handler);
 
   virtual void OnUpdate() = 0;
   virtual void OnRender() = 0;
-  virtual void OnKey(int key, int scancode, int action, int mods) = 0;
 
   void Run();
 

@@ -15,36 +15,14 @@
 *************************************************************************/
 #pragma once
 
-#include "core/user-input-handler.hxx"
-
-#include <glm/glm.hpp>
-
-#include <mutex>
-
 namespace engine::glfw
 {
 
-class Camera : public IUserInputHandler
+struct IUserInputHandler
 {
-public:
-  glm::mat4 GetViewTransform() const;
-  void OnKey(int key, int scancode, int action, int mods) override;
-  void OnMouse(double x, double y) override;
-private:
-  glm::vec3 m_position = {0.f, 0.f, 0.f};
-  glm::vec3 m_view = {0.f, 0.f, 1.f};
-  float m_velocity = .5f;
-  std::once_flag m_initialized_mouse_position;
-  glm::vec2 m_mouse_pos = {0.f, 0.f};
-
-  glm::vec3 u = {1.f, 0.f, 0.f};
-  glm::vec3 v = { 0.f, 1.f, 0.f };
-  glm::vec3 n = { 0.f, 0.f, 1.f };
-
-  glm::vec3 target = {0.f, 0.f, 1.f};
-
-  float m_pitch = 0.f;
-  float m_yaw = 0.f;
+  virtual ~IUserInputHandler() = default;
+  virtual void OnKey(int key, int scancode, int action, int mods) = 0;
+  virtual void OnMouse(double x, double y) = 0;
 };
 
 }  // namespace engine::glfw

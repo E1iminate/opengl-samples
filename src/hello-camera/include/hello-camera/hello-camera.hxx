@@ -18,6 +18,7 @@
 
 #include "core/application.hxx"
 #include "core/camera.hxx"
+#include "core/user-input-handler.hxx"
 
 #include <memory>
 
@@ -29,7 +30,7 @@ public:
 
   void OnUpdate() final;
   void OnRender() final;
-  void OnKey(int key, int scancode, int action, int mods) final;
+
 
 private:
   void LoadAssets();

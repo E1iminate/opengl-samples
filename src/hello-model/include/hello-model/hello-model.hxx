@@ -28,7 +28,6 @@ public:
 
   void OnUpdate() final;
   void OnRender() final;
-  void OnKey(int key, int scancode, int action, int mods) final {}
 
 private:
   void LoadAssets();

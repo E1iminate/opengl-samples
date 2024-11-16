@@ -26,8 +26,14 @@ static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-  Application* application = static_cast<Application*>(glfwGetWindowUserPointer(window));
+  IUserInputHandler* application = static_cast<IUserInputHandler*>(glfwGetWindowUserPointer(window));
   application->OnKey(key, scancode, action, mods);
+}
+
+static void MouseCallback(GLFWwindow* window, double x, double y)
+{
+  IUserInputHandler* application = static_cast<IUserInputHandler*>(glfwGetWindowUserPointer(window));
+  application->OnMouse(x, y);
 }
 
 Application::Application()
@@ -35,13 +41,23 @@ Application::Application()
   if (!m_window.Get())
     throw WindowInitFail();
 
-  glfwSetWindowUserPointer(m_window.Get(), this);
+  
   glfwMakeContextCurrent(m_window.Get());
   glfwSetFramebufferSizeCallback(m_window.Get(), FramebufferSizeCallback);
   glfwSetKeyCallback(m_window.Get(), KeyCallback);
 
   if (gladLoadGL() == 0)
     throw LibraryInitFail("gladLoadGL failed!");
+}
+
+Application::Application(IUserInputHandler& user_input_handler)
+ : Application()
+{
+  glfwSetWindowUserPointer(m_window.Get(), &user_input_handler);
+  glfwSetInputMode(m_window.Get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(m_window.Get(), MouseCallback);
+  if (glfwRawMouseMotionSupported())
+    glfwSetInputMode(m_window.Get(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
 void Application::Run()

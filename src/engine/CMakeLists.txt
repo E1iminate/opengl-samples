@@ -25,6 +25,7 @@ set(HEADERS
   include/core/application.hxx
   include/core/exceptions.hxx
   include/core/camera.hxx
+  include/core/user-input-handler.hxx
 )
 
 add_library(${TARGET} STATIC ${HEADERS} ${SOURCES})

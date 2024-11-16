@@ -28,6 +28,7 @@
 #include <numbers>
 
 HelloCamera::HelloCamera()
+ : Application(m_camera)
 {
   m_model = std::make_unique<tinyobj::Model>(GetCurrentExecutableDirectory() / "assets/models/cube.obj", GetCurrentExecutableDirectory() / "assets/models/");
 
@@ -137,7 +138,7 @@ HelloCamera::~HelloCamera()
   ImGui::DestroyContext();
 }
 
-static constexpr float Radians(float degrees) {
+constexpr float Radians(float degrees) {
   return std::numbers::pi_v<float> / 180.f * degrees;
 }
 
@@ -230,30 +231,6 @@ void HelloCamera::OnRender()
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void HelloCamera::OnKey(int key, int scancode, int action, int mods)
-{
-  glm::vec3 direction{};
-  switch (key)
-  {
-  case GLFW_KEY_W:
-    direction.z += 1.f;
-    break;
-  case GLFW_KEY_S:
-    direction.z -= 1.f;
-    break;
-  case GLFW_KEY_A:
-    direction.x -= 1.f;
-    break;
-  case GLFW_KEY_D:
-    direction.x += 1.f;
-    break;
-  default:
-    break;
-  }
-
-  m_camera.Move(direction);
 }
 
 int main()
