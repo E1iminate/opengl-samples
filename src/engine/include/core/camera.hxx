@@ -16,6 +16,7 @@
 #pragma once
 
 #include "core/user-input-handler.hxx"
+#include "core/frame-updatable.hxx"
 
 #include <glm/glm.hpp>
 
@@ -24,16 +25,25 @@
 namespace engine::glfw
 {
 
-class Camera : public IUserInputHandler
+class Camera : public IUserInputHandler,
+               public IFrameUpdatable
 {
 public:
   glm::mat4 GetViewTransform() const;
+  void OnFrame(Application& application, float deltaTime) override;
   void OnKey(int key, int scancode, int action, int mods) override;
   void OnMouse(double x, double y) override;
 private:
+  struct KeysPressed
+  {
+    bool w = false;
+    bool s = false;
+    bool a = false;
+    bool d = false;
+  } m_pressed;
   glm::vec3 m_position = {0.f, 0.f, 0.f};
   glm::vec3 m_view = {0.f, 0.f, 1.f};
-  float m_velocity = .5f;
+  float m_speed = 5.f;
   std::once_flag m_initialized_mouse_position;
   glm::vec2 m_mouse_pos = {0.f, 0.f};
 

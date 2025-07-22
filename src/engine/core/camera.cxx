@@ -38,7 +38,9 @@ glm::mat4 Camera::GetViewTransform() const
   };
 }
 
-float CyclicClamp(float value, float minValue, float maxValue) {
+
+float CyclicClamp(float value, float minValue, float maxValue)
+{
   if (value < minValue) {
     return maxValue;  // Round to min when value goes below min
   }
@@ -48,29 +50,46 @@ float CyclicClamp(float value, float minValue, float maxValue) {
   return value;  // Otherwise, return the value itself
 }
 
-void Camera::OnKey(int key, int scancode, int action, int mods)
+void Camera::OnFrame(Application& application, float deltaTime)
 {
-  switch (key)
-  {
-  case GLFW_KEY_W:
-    m_position += n * m_velocity;
-    break;
-  case GLFW_KEY_S:
-    m_position -= n * m_velocity;
-    break;
-  case GLFW_KEY_A:
-    m_position -= u * m_velocity;
-    break;
-  case GLFW_KEY_D:
-    m_position += u * m_velocity;
-    break;
-  default:
-    return;
+  m_pressed.w = glfwGetKey(application.GetWindow(), GLFW_KEY_W) == GLFW_PRESS;
+  m_pressed.s = glfwGetKey(application.GetWindow(), GLFW_KEY_S) == GLFW_PRESS;
+  m_pressed.a = glfwGetKey(application.GetWindow(), GLFW_KEY_A) == GLFW_PRESS;
+  m_pressed.d = glfwGetKey(application.GetWindow(), GLFW_KEY_D) == GLFW_PRESS;
+  
+  glm::vec3 direction = glm::vec3(0.f);
+  if (m_pressed.w) {
+    direction += n;
   }
+
+  if (m_pressed.s) {
+    direction -= n;
+  }
+
+  if (m_pressed.a) {
+    direction -= u;
+  }
+
+  if (m_pressed.d) {
+    direction += u;
+  }
+
+
+  if (glm::length(direction) > 0.0f)
+      direction = glm::normalize(direction);
+
+  glm::vec3 velocity = m_speed * direction;
+  m_position = m_position + velocity * deltaTime;
+
+  m_pressed = {};
 }
 
+void Camera::OnKey(int key, int scancode, int action, int mods)
+{}
 
-constexpr float Radians(float degrees) {
+
+constexpr float Radians(float degrees)
+{
   return std::numbers::pi_v<float> / 180.f * degrees;
 }
 
@@ -84,7 +103,7 @@ void Camera::OnMouse(double x, double y)
   glm::vec2 mouse_pos_diff = {x - m_mouse_pos.x, m_mouse_pos.y - y};
   m_mouse_pos = {x, y};
 
-  m_pitch = glm::clamp(m_pitch + mouse_pos_diff.y, -90.f, 90.f);
+  m_pitch = glm::clamp(m_pitch + mouse_pos_diff.y, -45.f, 45.f);
   m_yaw = CyclicClamp(m_yaw + mouse_pos_diff.x, 0.f, 360.f);
 
   float quat_pitch = m_pitch / 2.f;

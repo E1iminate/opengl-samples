@@ -79,7 +79,6 @@ public:
 
   void Run();
 
-protected:
   GLFWwindow* GetWindow() { return m_window.Get(); }
 
 private:

@@ -58,7 +58,7 @@ private:
   float m_fov = 90.f;
   float m_cube_scale = 0.5f;
   float m_near_z = 0.1f;
-  float m_far_z = 100.f;
+  float m_far_z = 5000.f;
 
   float m_translation_x = 0.f;
   float m_translation_y = 0.f;
@@ -68,4 +68,5 @@ private:
   GLuint m_ebo = -1;
   GLuint m_vbo = -1;
   GLuint m_vao = -1;
+  GLboolean m_is_skybox = 0;
 };

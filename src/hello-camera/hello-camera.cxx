@@ -91,14 +91,23 @@ layout (location = 1) in vec2 aTexCoord;
 out vec2 texCoord;
 uniform mat4 rotation_y;
 uniform mat4 rotation_z;
-uniform float scale;
 uniform mat4 translation;
 uniform mat4 projection;
 uniform mat4 camera;
+uniform float scale;
+uniform bool is_skybox;
 
 void main()
 {
-  gl_Position = projection * camera * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
+  if (is_skybox)
+  {
+    gl_Position = projection * camera * vec4(100.0 * aPos, 1.0);
+  }
+  else
+  {
+    gl_Position = projection * camera * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
+  }
+
   texCoord = aTexCoord;
 }
 )";
@@ -113,9 +122,17 @@ void main()
 in vec2 texCoord;
 out vec4 FragColor;
 uniform sampler2D ourTexture;
+uniform bool is_skybox;
 void main()
 {
-  FragColor = texture(ourTexture, texCoord);
+  if (is_skybox)
+  {
+    FragColor = texture(ourTexture, texCoord);
+  }
+  else
+  {
+    FragColor = texture(ourTexture, texCoord) * vec4(1.0, 0.2, 0.2, 1.0);
+  }
 }
 )";
 
@@ -147,6 +164,8 @@ void HelloCamera::OnUpdate()
   auto endTime = std::chrono::steady_clock::now();
   float dt = std::chrono::duration<float>(endTime - m_startTime).count();
   m_startTime = endTime;
+
+  m_camera.OnFrame(*this, dt);
 
   m_angle = std::fmodf(m_angle + m_speed * dt, 2.f * std::numbers::pi_v<float>);
 
@@ -227,6 +246,9 @@ void HelloCamera::OnRender()
   glBindVertexArray(m_vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
+  glUniform1i(glGetUniformLocation(m_program, "is_skybox"), 1);
+  glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
+  glUniform1i(glGetUniformLocation(m_program, "is_skybox"), 0);
   glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
 
   ImGui::Render();
