@@ -1,0 +1,11 @@
+LearnOpenGL Textures License
+
+The textures in this folder are sourced from LearnOpenGL by Joey De Vries.
+
+Repository: https://github.com/JoeyDeVries/LearnOpenGL
+
+They are licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+
+You may use these textures for non-commercial purposes only, with proper attribution.
+
+License details: https://creativecommons.org/licenses/by-nc/4.0/
