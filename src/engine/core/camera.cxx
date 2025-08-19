@@ -109,7 +109,7 @@ void Camera::OnMouse(double x, double y)
   float quat_pitch = m_pitch / 2.f;
   float quat_yaw = m_yaw / 2.f;
 
-  glm::quat rotate_yaw(std::cos(Radians(quat_yaw)), 0.f, std::sin(Radians(quat_yaw)), 0.f);
+  glm::quat rotate_yaw = glm::quat(std::cos(Radians(quat_yaw)), 0.f, std::sin(Radians(quat_yaw)), 0.f);
   glm::quat rotate_yaw_conjugate(rotate_yaw.w, -rotate_yaw.x, -rotate_yaw.y, -rotate_yaw.z);
   glm::quat new_x_quat = rotate_yaw * glm::quat(0.f, 1.f, 0.f, 0.f) * rotate_yaw_conjugate;
   glm::vec3 new_x = glm::normalize(glm::vec3(new_x_quat.x, new_x_quat.y, new_x_quat.z));
@@ -118,7 +118,7 @@ void Camera::OnMouse(double x, double y)
   glm::quat rotate_pitch_conjugate(rotate_pitch.w, -rotate_pitch.x, -rotate_pitch.y, -rotate_pitch.z);
   glm::vec3 up_y(0.f, 1.f, 0.f);
   glm::vec3 current_z = glm::cross(new_x, up_y);
-  glm::quat new_z_quat = rotate_pitch * current_z * rotate_pitch_conjugate;
+  glm::quat new_z_quat = rotate_pitch * glm::quat(0.f, current_z.x, current_z.y, current_z.z) * rotate_pitch_conjugate;
   glm::vec3 new_z = glm::normalize(glm::vec3(new_z_quat.x, new_z_quat.y, new_z_quat.z));
 
   glm::vec3 new_y = glm::normalize(glm::cross(new_x, new_z));
