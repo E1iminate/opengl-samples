@@ -92,6 +92,14 @@ class Image
 public:
   Image(const std::filesystem::path& path)
   {
+    if (!std::filesystem::exists(path)) {
+      throw FailedToLoadObject(std::string("File does not exist: ") + path.string());
+    }
+
+    if (!std::filesystem::is_regular_file(path)) {
+      throw FailedToLoadObject(std::string("Not a regular file: ") + path.string());
+    }
+
     bytes = stbi_load(path.string().c_str(), &width, &height, &channelsNum, 0);
     if (!bytes)
       throw FailedToLoadObject(std::string("Failed to load ") + path.string());
