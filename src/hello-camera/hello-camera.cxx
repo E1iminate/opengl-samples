@@ -53,8 +53,18 @@ void HelloCamera::LoadAssets()
 {
   GLuint texture = -1;
   glGenTextures(1, &texture);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
-  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/wooden_container.jpg", [](stb::Image& image)
+  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/LearnOpenGL/wooden_container.jpg", [](stb::Image& image)
+    {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.Bytes());
+    });
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  glGenTextures(1, &texture);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/texture1024.png", [](stb::Image& image)
     {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.Bytes());
     });
@@ -121,17 +131,18 @@ void main()
 #version 330 core
 in vec2 texCoord;
 out vec4 FragColor;
-uniform sampler2D ourTexture;
+uniform sampler2D woodenBox;
+uniform sampler2D skybox;
 uniform bool is_skybox;
 void main()
 {
   if (is_skybox)
   {
-    FragColor = texture(ourTexture, texCoord);
+    FragColor = texture(skybox, texCoord);
   }
   else
   {
-    FragColor = texture(ourTexture, texCoord) * vec4(1.0, 0.2, 0.2, 1.0);
+    FragColor = texture(woodenBox, texCoord);
   }
 }
 )";
@@ -217,6 +228,9 @@ void HelloCamera::OnUpdate()
   glUniform1f(glGetUniformLocation(m_program, "scale"), m_cube_scale);
   glUniformMatrix4fv(glGetUniformLocation(m_program, "translation"), 1, GL_TRUE, glm::value_ptr(translation));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "camera"), 1, GL_TRUE, glm::value_ptr(camera));
+
+  glUniform1i(glGetUniformLocation(m_program, "woodenBox"), 0);
+  glUniform1i(glGetUniformLocation(m_program, "skybox"), 1);
 }
 
 void HelloCamera::OnRender()
