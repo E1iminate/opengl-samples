@@ -1,1 +1,1 @@
-v1.0 — Initial release, texture1024.png only
+v1.0 — Initial release consisting of texture1024.png only
