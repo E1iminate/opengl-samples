@@ -168,8 +168,8 @@ void HelloModel::OnUpdate()
   };
 
   glm::mat4 projection = {
-    projection_fov / aspect, 0.f, 0.f, 0.f,
-    0.f, projection_fov, 0.f, 0.f,
+    projection_fov, 0.f, 0.f, 0.f,
+    0.f, projection_fov * aspect, 0.f, 0.f,
     0.f, 0.f, (m_far_z + m_near_z) / range_z, - (2.f * m_far_z * m_near_z) / range_z,
     0.f, 0.f, 1.f, 0.f,
   };
