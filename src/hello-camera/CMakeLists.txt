@@ -14,11 +14,17 @@
 # limitations under the License.
 ##########################################################################
 
-add_subdirectory(common)
-add_subdirectory(engine)
+set(TARGET hello-camera)
 
-add_subdirectory(simple-triangle)
-add_subdirectory(hello-texture)
-add_subdirectory(hello-transform)
-add_subdirectory(hello-model)
-add_subdirectory(hello-camera)
+set(SOURCES include/hello-camera/hello-camera.hxx hello-camera.cxx)
+
+add_executable(${TARGET} ${SOURCES})
+
+target_link_libraries(${TARGET} engine glad stbimage glm imgui tinyobjloader common)
+
+target_include_directories(${TARGET}
+PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}/include
+)
+
+copy_assets(${TARGET})

@@ -17,29 +17,32 @@
 #pragma once
 
 #include "core/application.hxx"
+#include "core/camera.hxx"
+#include "core/user-input-handler.hxx"
 
 #include <memory>
 
-class HelloModel : public engine::glfw::Application
+class HelloCamera : public engine::glfw::Application
 {
 public:
-  HelloModel();
-  ~HelloModel();
+  HelloCamera();
+  ~HelloCamera();
 
   void OnUpdate() final;
   void OnRender() final;
 
+
 private:
   void LoadAssets();
 
-  struct Vec2
-  {
+  engine::glfw::Camera m_camera;
+
+  struct Vec2 {
     tinyobj::real_t x = 0.f;
     tinyobj::real_t y = 0.f;
   };
 
-  struct Vec3
-  {
+  struct Vec3 {
     tinyobj::real_t x = 0.f;
     tinyobj::real_t y = 0.f;
     tinyobj::real_t z = 0.f;
@@ -55,13 +58,15 @@ private:
   float m_fov = 90.f;
   float m_cube_scale = 0.5f;
   float m_near_z = 0.1f;
-  float m_far_z = 100.f;
+  float m_far_z = 5000.f;
 
   float m_translation_x = 0.f;
   float m_translation_y = 0.f;
   float m_translation_z = 2.f;
+  float m_camera_velocity = .5f;
   GLuint m_program = 0u;
   GLuint m_ebo = -1;
   GLuint m_vbo = -1;
   GLuint m_vao = -1;
+  GLboolean m_is_skybox = 0;
 };

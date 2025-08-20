@@ -14,7 +14,7 @@
 * limitations under the License.
 *************************************************************************/
 
-#include "hello-model/hello-model.hxx"
+#include "hello-camera/hello-camera.hxx"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -27,7 +27,8 @@
 #include <cmath>
 #include <numbers>
 
-HelloModel::HelloModel()
+HelloCamera::HelloCamera()
+ : Application(m_camera)
 {
   m_model = std::make_unique<tinyobj::Model>(GetCurrentExecutableDirectory() / "assets/models/cube.obj", GetCurrentExecutableDirectory() / "assets/models/");
 
@@ -48,12 +49,22 @@ HelloModel::HelloModel()
   glEnable(GL_DEPTH_TEST);
 }
 
-void HelloModel::LoadAssets()
+void HelloCamera::LoadAssets()
 {
   GLuint texture = -1;
   glGenTextures(1, &texture);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
   ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/LearnOpenGL/wooden_container.jpg", [](stb::Image& image)
+    {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.Bytes());
+    });
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  glGenTextures(1, &texture);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/DebugTextures/texture1024.png", [](stb::Image& image)
     {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.Bytes());
     });
@@ -90,13 +101,23 @@ layout (location = 1) in vec2 aTexCoord;
 out vec2 texCoord;
 uniform mat4 rotation_y;
 uniform mat4 rotation_z;
-uniform float scale;
 uniform mat4 translation;
 uniform mat4 projection;
+uniform mat4 camera;
+uniform float scale;
+uniform bool is_skybox;
 
 void main()
 {
-  gl_Position = projection * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
+  if (is_skybox)
+  {
+    gl_Position = projection * camera * vec4(100.0 * aPos, 1.0);
+  }
+  else
+  {
+    gl_Position = projection * camera * translation * rotation_z * rotation_y * vec4(scale * aPos, 1.0);
+  }
+
   texCoord = aTexCoord;
 }
 )";
@@ -110,10 +131,19 @@ void main()
 #version 330 core
 in vec2 texCoord;
 out vec4 FragColor;
-uniform sampler2D ourTexture;
+uniform sampler2D woodenBox;
+uniform sampler2D skybox;
+uniform bool is_skybox;
 void main()
 {
-  FragColor = texture(ourTexture, texCoord);
+  if (is_skybox)
+  {
+    FragColor = texture(skybox, texCoord);
+  }
+  else
+  {
+    FragColor = texture(woodenBox, texCoord);
+  }
 }
 )";
 
@@ -129,22 +159,24 @@ void main()
   glLinkProgram(m_program);
 }
 
-HelloModel::~HelloModel()
+HelloCamera::~HelloCamera()
 {
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
 }
 
-static constexpr float Radians(float degrees) {
+constexpr float Radians(float degrees) {
   return std::numbers::pi_v<float> / 180.f * degrees;
 }
 
-void HelloModel::OnUpdate()
+void HelloCamera::OnUpdate()
 {
   auto endTime = std::chrono::steady_clock::now();
   float dt = std::chrono::duration<float>(endTime - m_startTime).count();
   m_startTime = endTime;
+
+  m_camera.OnFrame(*this, dt);
 
   m_angle = std::fmodf(m_angle + m_speed * dt, 2.f * std::numbers::pi_v<float>);
 
@@ -188,27 +220,39 @@ void HelloModel::OnUpdate()
                    0.f, 0.f,             0.f,   1.f,
   };
 
+  glm::mat4 camera = m_camera.GetViewTransform();
+
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_z"), 1, GL_TRUE, glm::value_ptr(rotation_z));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "rotation_y"), 1, GL_TRUE, glm::value_ptr(rotation_y));
   glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_TRUE, glm::value_ptr(projection));
   glUniform1f(glGetUniformLocation(m_program, "scale"), m_cube_scale);
   glUniformMatrix4fv(glGetUniformLocation(m_program, "translation"), 1, GL_TRUE, glm::value_ptr(translation));
+  glUniformMatrix4fv(glGetUniformLocation(m_program, "camera"), 1, GL_TRUE, glm::value_ptr(camera));
+
+  glUniform1i(glGetUniformLocation(m_program, "woodenBox"), 0);
+  glUniform1i(glGetUniformLocation(m_program, "skybox"), 1);
 }
 
-void HelloModel::OnRender()
+void HelloCamera::OnRender()
 {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
 
   ImGui::NewFrame();
-  ImGui::InputFloat("Rotation velocity", &m_speed, 0.5f, 1.0f, "%.1f");
-  ImGui::InputFloat("Fov", &m_fov, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Near Z", &m_near_z, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Far Z", &m_far_z, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Translation X", &m_translation_x, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Translation Y", &m_translation_y, 0.1f, 0.f, "%.1f");
-  ImGui::InputFloat("Translation Z", &m_translation_z, 0.1f, 0.f, "%.1f");
+
+  ImGui::Begin("hello-camera");
+
+    ImGui::InputFloat("Rotation velocity", &m_speed, 0.5f, 1.0f, "%.1f");
+    ImGui::InputFloat("Fov", &m_fov, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Cube scale", &m_cube_scale, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Near Z", &m_near_z, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Far Z", &m_far_z, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Translation X", &m_translation_x, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Translation Y", &m_translation_y, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Translation Z", &m_translation_z, 0.1f, 0.f, "%.1f");
+    ImGui::InputFloat("Camera velocity", &m_camera_velocity, 0.1f, 0.f, "%.1f");
+
+  ImGui::End();
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -216,8 +260,18 @@ void HelloModel::OnRender()
   glBindVertexArray(m_vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
+  glUniform1i(glGetUniformLocation(m_program, "is_skybox"), 1);
+  glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
+  glUniform1i(glGetUniformLocation(m_program, "is_skybox"), 0);
   glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+int main()
+{
+  HelloCamera application;
+  application.Run();
+  return 0;
 }
