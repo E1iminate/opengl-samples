@@ -64,7 +64,7 @@ void HelloCamera::LoadAssets()
   glGenTextures(1, &texture);
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, texture);
-  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/texture1024.png", [](stb::Image& image)
+  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/DebugTextures/texture1024.png", [](stb::Image& image)
     {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.Bytes());
     });

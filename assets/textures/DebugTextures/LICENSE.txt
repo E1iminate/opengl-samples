@@ -1,0 +1,20 @@
+DebugTextures v1.0
+Copyright © 2025 Vladislav Riabov. All Rights Reserved.
+
+These textures are licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+You are free to:
+- Share — copy and redistribute the textures in any medium or format.
+- Adapt — remix, transform, and build upon the textures for any non-commercial purpose.
+
+Under the following terms:
+- Attribution — You must give appropriate credit to [Your Name], provide a link to the license, and indicate if changes were made.
+- NonCommercial — You may not use these textures for commercial purposes without explicit permission.
+
+No additional restrictions — you may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+
+Version Information:
+- Version: v1.0
+- License applies to this release only. Future versions may have different licensing terms.
+
+For full license details, see: https://creativecommons.org/licenses/by-nc/4.0/
