@@ -44,7 +44,6 @@ Application::Application()
   
   glfwMakeContextCurrent(m_window.Get());
   glfwSetFramebufferSizeCallback(m_window.Get(), FramebufferSizeCallback);
-  glfwSetKeyCallback(m_window.Get(), KeyCallback);
 
   if (gladLoadGL() == 0)
     throw LibraryInitFail("gladLoadGL failed!");
@@ -53,6 +52,7 @@ Application::Application()
 Application::Application(IUserInputHandler& user_input_handler)
  : Application()
 {
+  glfwSetKeyCallback(m_window.Get(), KeyCallback);
   glfwSetWindowUserPointer(m_window.Get(), &user_input_handler);
   glfwSetInputMode(m_window.Get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetCursorPosCallback(m_window.Get(), MouseCallback);
