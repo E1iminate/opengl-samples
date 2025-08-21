@@ -29,14 +29,8 @@ function(copy_assets TARGET_NAME)
   set(TARGET_ASSETS $<TARGET_FILE_DIR:${TARGET_NAME}>/assets)
   
   add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E make_directory
-      ${TARGET_ASSETS}
-  )
-  
-  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_directory
-      ${ASSETS_DIR}
-      ${TARGET_ASSETS}
+      COMMAND ${CMAKE_COMMAND} -E rm -rf ${TARGET_ASSETS}
+      COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_DIR} ${TARGET_ASSETS}
   )
 endfunction()
 
