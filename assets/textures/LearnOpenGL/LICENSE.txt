@@ -1,11 +1,18 @@
-LearnOpenGL Textures License
+===========================
+LearnOpenGL Texture License
+===========================
 
-The textures in this folder are sourced from LearnOpenGL by Joey De Vries.
+Texture file: container.jpg
+Source: LearnOpenGL GitHub repository
+Repository URL: https://github.com/JoeyDeVries/LearnOpenGL
+Author: Joey de Vries
+Twitter: https://twitter.com/JoeyDeVriez
 
-Repository: https://github.com/JoeyDeVries/LearnOpenGL
+License: Not explicitly specified for this texture file.
+Usage: Safe for personal, educational, or non-commercial projects only.
 
-They are licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+Attribution: Joey de Vries, LearnOpenGL repository (https://github.com/JoeyDeVries/LearnOpenGL), commit f28ad1e, Twitter: https://twitter.com/JoeyDeVriez
 
-You may use these textures for non-commercial purposes only, with proper attribution.
-
-License details: https://creativecommons.org/licenses/by-nc/4.0/
+Proof of source:
+- GitHub commit hash: f28ad1e
+- LearnOpenGL About page PDF (downloaded 2025-08-21) located at license_proof.pdf
