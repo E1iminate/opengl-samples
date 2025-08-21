@@ -50,7 +50,7 @@ int main()
     return -1;
 
   int width = -1, height = -1, nrChannels = -1;
-  unsigned char* data = stbi_load((GetCurrentExecutableDirectory() / "assets/textures/LearnOpenGL/wooden_container.jpg").string().c_str(), &width, &height, &nrChannels, 0);
+  unsigned char* data = stbi_load((GetCurrentExecutableDirectory() / "assets/textures/LearnOpenGL/container.jpg").string().c_str(), &width, &height, &nrChannels, 0);
 
   GLuint texture = -1;
   glGenTextures(1, &texture);
