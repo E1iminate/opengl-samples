@@ -1,5 +1,5 @@
 ##########################################################################
-# Copyright 2024 Vladislav Riabov
+# Copyright 2025 Vladislav Riabov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
 # limitations under the License.
 ##########################################################################
 
-set(TARGET hello-lighting)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
 
-set(SOURCES include/hello-lighting/hello-lighting.hxx hello-lighting.cxx)
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_FBX_IMPORTER OFF CACHE BOOL "" FORCE)
 
-add_executable(${TARGET} ${SOURCES})
+add_subdirectory(${ROOT_DIR}/3rd-party/assimp)
 
-target_link_libraries(${TARGET} engine glad stbimage glm imgui tinyobjloader common assimp::assimp)
-
-target_include_directories(${TARGET}
-PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/include
-)
-
-copy_assets(${TARGET})

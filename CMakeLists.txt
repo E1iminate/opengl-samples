@@ -41,4 +41,6 @@ find_package(tinyobjloader REQUIRED)
 add_subdirectory(${ROOT_DIR}/3rd-party/glfw)
 add_subdirectory(${ROOT_DIR}/3rd-party/glm)
 
+include(AddAssimp)
+
 add_subdirectory(src)
