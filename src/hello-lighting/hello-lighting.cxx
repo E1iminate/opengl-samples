@@ -55,7 +55,7 @@ void HelloLighting::LoadAssets()
   glGenTextures(1, &texture);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
-  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/LearnOpenGL/wooden_container.jpg", [](stb::Image& image)
+  ProcessImage(GetCurrentExecutableDirectory() / "assets/textures/LearnOpenGL/container.jpg", [](stb::Image& image)
     {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.Bytes());
     });
