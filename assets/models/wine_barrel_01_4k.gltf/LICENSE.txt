@@ -1,0 +1,12 @@
+Wine Barrel 01
+Author: Poly Haven
+Source: https://polyhaven.com/a/wine_barrel_01
+License: CC0 1.0 Universal (Public Domain)
+Date Obtained: 2025-08-21
+License Proof: license_proof.pdf
+
+This work is dedicated to the public domain under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication.
+You are free to use, modify, and distribute this model for any purpose, including commercial use, without asking permission.
+
+CC0 1.0 Universal License:
+https://creativecommons.org/publicdomain/zero/1.0/
