@@ -20,6 +20,10 @@
 #include "core/camera.hxx"
 #include "core/user-input-handler.hxx"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <memory>
 
 class HelloLighting : public engine::glfw::Application
@@ -37,36 +41,36 @@ private:
 
   engine::glfw::Camera m_camera;
 
-  struct Vec2 {
-    tinyobj::real_t x = 0.f;
-    tinyobj::real_t y = 0.f;
+  struct Vertex {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 texcoord;
   };
 
-  struct Vec3 {
-    tinyobj::real_t x = 0.f;
-    tinyobj::real_t y = 0.f;
-    tinyobj::real_t z = 0.f;
+  struct Mesh {
+    std::vector<Vertex> m_vertices;
+    std::vector<uint32_t> m_indices;
   };
 
-  std::unique_ptr<tinyobj::Model> m_model;
-  std::vector<Vec3> m_vertices;
-  std::vector<Vec2> m_texcoords;
+  std::vector<GLuint> m_vaos;
+  std::vector<GLuint> m_vbos;
+  std::vector<GLuint> m_ebos;
 
+  std::vector<Mesh> m_meshes;
+
+  const aiScene* m_scene = nullptr;
   std::chrono::steady_clock::time_point m_startTime = std::chrono::steady_clock::now();
   float m_angle = 0.f;
   float m_speed = 1.f;
   float m_fov = 90.f;
-  float m_cube_scale = 0.5f;
+  float m_cube_scale = 1.f;
   float m_near_z = 0.1f;
   float m_far_z = 5000.f;
 
   float m_translation_x = 0.f;
   float m_translation_y = 0.f;
-  float m_translation_z = 2.f;
+  float m_translation_z = 0.f;
   float m_camera_velocity = .5f;
   GLuint m_program = 0u;
-  GLuint m_ebo = -1;
-  GLuint m_vbo = -1;
-  GLuint m_vao = -1;
   GLboolean m_is_skybox = 0;
 };
